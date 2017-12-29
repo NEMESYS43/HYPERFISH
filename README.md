@@ -2,6 +2,12 @@
 
 Modular phishing script written in node.js
 
+
+**Installing**
+
+download or clone hyperfish then open up a terminal in the HYPERFISH directory then 
+`npm install`
+
 **usage:**
 
 `node hyperfish --port=8080 --kind=Gmail`
