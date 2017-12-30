@@ -10,14 +10,15 @@ download or clone hyperfish then open up a terminal in the HYPERFISH directory t
 
 **usage:**
 
-`Options:
-  --version      Show version number                                   [boolean]
-  --kind         sets the site to phish                      [string] [required]
+Options:
+  --version      Show version number                                   [boolean]  
+  --kind         sets the site to phish                      [string] [required]  
   --destination  sets the site your victim lands
-                 on when they submit their data
-  --port         sets the port to use default is 80                     [string]
+                 on when they submit their data  
+  --port         sets the port to use default is 80                     [string]  
   --webui        sets if you want to run the web UI
-  -?, --help     Show help                                             [boolean]`
+  -?, --help     Show help                                             [boolean]  
+  
   
 **Example**
 `node hyperfish --port=80 --kind=Gmail --webui --destination=https://anysite.com`
