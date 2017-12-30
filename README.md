@@ -11,6 +11,7 @@ download or clone hyperfish then open up a terminal in the HYPERFISH directory t
 **usage:**
 
 Options:
+
   --version      Show version number                                   [boolean]  
   --kind         sets the site to phish                      [string] [required]  
   --destination  sets the site your victim lands
