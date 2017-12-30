@@ -13,7 +13,9 @@ download or clone hyperfish then open up a terminal in the HYPERFISH directory t
 `node hyperfish --port=80 --kind=Gmail --webui --destination=https://anysite.com`
 
 
-then point your browser to `localhost:80`
+then point your browser to `localhost`
+
+if you use the --webui command then goto `localhost/adminPanel`
   
 ## supported sites
   1. Gmail
