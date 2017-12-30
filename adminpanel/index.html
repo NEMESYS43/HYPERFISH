@@ -1,0 +1,104 @@
+<html>
+    <title>HYPERFISH Web UI</title>
+    <head>
+            <script src="/socket.io/socket.io.js"></script>
+            <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    </head>
+    <body>
+ 
+           <div id="main-content-div">
+<center>
+<xmp>
+        ██╗  ██╗██╗   ██╗██████╗ ███████╗██████╗ ███████╗██╗███████╗██╗  ██╗
+        ██║  ██║╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗██╔════╝██║██╔════╝██║  ██║
+        ███████║ ╚████╔╝ ██████╔╝█████╗  ██████╔╝█████╗  ██║███████╗███████║
+        ██╔══██║  ╚██╔╝  ██╔═══╝ ██╔══╝  ██╔══██╗██╔══╝  ██║╚════██║██╔══██║
+        ██║  ██║   ██║   ██║     ███████╗██║  ██║██║     ██║███████║██║  ██║
+        ╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
+    </xmp>
+</center>
+                <table id="table" >
+                        <tr>
+                          <th>Username</th>
+                          <th>Password</th>
+                          <th>Notes</th>
+                        </tr>
+                        
+                      </table>
+        </div>
+
+    </body>
+</html>
+
+<script>
+
+var socket = io();
+var art1 = `
+██╗  ██╗██╗   ██╗██████╗ ███████╗██████╗ ███████╗██╗███████╗██╗  ██╗
+██║  ██║╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗██╔════╝██║██╔════╝██║  ██║
+███████║ ╚████╔╝ ██████╔╝█████╗  ██████╔╝█████╗  ██║███████╗███████║
+██╔══██║  ╚██╔╝  ██╔═══╝ ██╔══╝  ██╔══██╗██╔══╝  ██║╚════██║██╔══██║
+██║  ██║   ██║   ██║     ███████╗██║  ██║██║     ██║███████║██║  ██║
+╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝`
+
+
+$( window ).load(function() {
+
+  socket.emit('queryCredentials')
+});
+socket.on('queriedCredentials', function(gmail, password){
+
+    document.getElementById('table').innerHTML += "<tr><td>" + gmail + "</td><td>" + password + "</td><td><input type='text'></input></td></tr>"
+    
+})
+</script>
+<style>
+    #main-content-div{
+        position: absolute;
+        height:100%;
+        width:100%;
+        top:0px;
+        bottom:0px;
+        right:0px;
+        left:0px;
+        background:#1c2125;
+    }
+    table {
+    position: absolute;
+    right:50%;
+    margin-top:20px;
+    margin-right:-325px;
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 650px;
+    border: 1px solid black;
+    border-spacing: 0;
+    border-collapse: collapse;
+    border-radius: 10px;
+    background: #2c3e50;
+    border-style: hidden; /* hide standard table (collapsed) border */
+
+}
+
+td, th {
+
+    text-align: left;
+    padding: 8px;
+}
+td{
+    background: #2c3e50;
+}
+th{
+    background: #2980b9;
+}
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+table tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+
+table tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}
+</style>

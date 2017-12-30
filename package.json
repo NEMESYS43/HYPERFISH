@@ -1,14 +1,17 @@
 {
   "name": "HYPERFISH",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Modular phishing script written in node.js",
   "main": "hyperfish.js",
   "scripts": {
     "start": "node hyperfish.js"
   },
   "dependencies": {
+    "cli-table": "^0.3.1",
     "colors": "^1.1.2",
     "express": "^4.16.2",
+    "keypress": "^0.2.1",
+    "nedb": "^1.8.0",
     "socket.io": "^2.0.4",
     "yargs": "^10.0.3"
   },

