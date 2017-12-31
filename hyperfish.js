@@ -148,16 +148,15 @@ app.get('/adminPanel', function(req, res){
           webUser.find({}, function(err, docs) {  
             
             docs.forEach(function(d) {
-                console.log('Found user:', d.username, d.password);
                 var username = "NEMESYS43"
                 if(username == d.username && password == d.password){
                    loginTrue = "true"
-                  
                 }else{
                   socket.emit('Error')
                 }
             });
             if(loginTrue == "true"){
+              console.log(colors.green('[+]') + colors.white(' Logged Into Webui '));
               socket.emit('loginTrue')
             }
           });
@@ -170,7 +169,6 @@ app.get('/adminPanel', function(req, res){
           }else{
           webUser.find({ password: { $exists: password }}, function(err, docs) {  
             docs.forEach(function(d) {
-                console.log('Found user:', d.username);
                 socket.emit('loginTrue')
               });
             });
