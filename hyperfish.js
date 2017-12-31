@@ -145,18 +145,16 @@ app.get('/adminPanel', function(req, res){
           loginTrue = "false"
         })
         socket.on('checkLogin',function(password){
-          console.log(password)
           webUser.find({}, function(err, docs) {  
             
             docs.forEach(function(d) {
                 console.log('Found user:', d.username, d.password);
                 var username = "NEMESYS43"
                 if(username == d.username && password == d.password){
-                  console.log("YEP")
                    loginTrue = "true"
                   
                 }else{
-                  console.log("hell Naw")
+                  socket.emit('Error')
                 }
             });
             if(loginTrue == "true"){
@@ -168,8 +166,7 @@ app.get('/adminPanel', function(req, res){
           console.log(oldPassword)
           console.log(newPassword)
           if(oldPassword.length <=3 || newPassword.length <= 3){
-            socket.emit('changePasswordError')
-            console.log("error")
+            socket.emit('Error')
           }else{
           webUser.find({ password: { $exists: password }}, function(err, docs) {  
             docs.forEach(function(d) {

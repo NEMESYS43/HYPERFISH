@@ -71,10 +71,12 @@ socket.on('newData', function(){
     newData()  
 })
 function changePassword(){
+    $("#error").addClass("show");
     $("#changePasswordPanel").removeClass("hide");
     $("#loginPanel").addClass("hide");
 }
 function cancelChangePassword(){
+    $("#error").addClass("show");
     $("#changePasswordPanel").addClass("hide");
     $("#loginPanel").removeClass("hide");
 }
@@ -120,11 +122,12 @@ function checkChangePassword(){
     var newPassword = document.getElementById('new-webUser-password').value
     socket.emit('checkChangePassword', oldPassword, newPassword)
 }
-socket.on('changePasswordError', function(){
+socket.on('Error', function(){
     console.log("error")
     $("#error").addClass("show");
 })
 socket.on('loginTrue',function(){
+    $("#error").removeClass("show");
     login()
 })
   $("#webUser-password").keyup(function(event) {
@@ -146,9 +149,14 @@ socket.on('loginTrue',function(){
         
     }
     .error{
+        position: absolute;
+        top:60px;
         display: none;
         font-family: helvetica;
         color:red;
+        width:58px;
+        margin-right:-29px;
+        right:50%;
     }
     .logout{
         position: absolute;
