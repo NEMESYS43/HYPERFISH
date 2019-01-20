@@ -1,0 +1,165 @@
+    *{
+        outline:none;
+        
+    }
+    .error{
+        position: absolute;
+        top:60px;
+        display: none;
+        font-family: helvetica;
+        color:red;
+        width:58px;
+        margin-right:-29px;
+        right:50%;
+    }
+    .logout{
+        position: absolute;
+        color:#2980b9;
+        font-family: helvetica;
+        cursor:pointer;
+        top:70px;
+        right:70px;
+        font-size: 10pt;
+    }
+    .change-password{
+        float:right;
+        font-size:10pt;
+        color:#2980b9;
+        font-family: helvetica;
+        margin-top:5px;
+        cursor: pointer;
+    }
+    .show{
+        display: block;
+    }
+    .hide{
+        display: none;
+    }
+    .webUser-password{
+        background:#2980b9;
+        border:none;
+        border-radius: 5px;
+        margin-top:50px;
+        height:30px;
+        width:300px;
+        padding-left:20px;
+    }
+    .new-webUser-password{
+        background:#2980b9;
+        border:none;
+        border-radius: 5px;
+        margin-top:20px;
+        height:30px;
+        width:300px;
+        padding-left:20px;
+    }
+    .webUser-password-submit{
+        
+        border:none;
+        background:#2c3e50;
+        border-radius: 5px;
+        margin-top:20px;
+        height:30px;
+        width:300px;
+    }
+    .loginpanel{
+        position: absolute;
+        margin-right:-150px;
+        right:50%;
+        width:300px;
+        font-family: helvetica;
+        color:#2c3e50;
+    }
+    .changePasswordPanel{
+        position: absolute;
+        margin-right:-150px;
+        right:50%;
+        width:300px;
+        font-family: helvetica;
+        color:#2c3e50;
+    }
+        #main-content-div{
+        position: absolute;
+ 
+        top:0px;
+        bottom:0px;
+        right:0px;
+        left:0px;
+        background:#1c2125;
+    }
+    body{
+        background:#1c2125;
+    }
+    table {
+
+    position: absolute;
+
+    margin-top:100px;
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid black;
+    border-spacing: 0;
+    border-collapse: collapse;
+    border-radius: 10px;
+    background: #2c3e50;
+    border-style: hidden; /* hide standard table (collapsed) border */
+
+}
+table input{
+    background: transparent;
+    border:none;
+}
+.hyperfish-img{
+    margin-top:20px;
+    background-image: url('hyperfish.png');
+    background-size: 300px,52px;
+    top:20px;
+    font-size:5pt;
+    color:#2980b9;
+    width:300px;
+    height:52px
+
+}
+td, th {
+
+    text-align: left;
+    padding: 8px;
+}
+td{
+    background: #2c3e50;
+}
+th{
+    background: #2980b9;
+}
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+table tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+
+table tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}
+.remove{
+    border:none;
+    background: transparent;
+    background-image: url('x.png');
+    background-size: 20px,20px;
+    width:20px;
+    height:20px;
+    float:right;
+}
+::-webkit-input-placeholder { /* WebKit browsers */
+    color:    black;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:    black;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:    black;
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:    black;
+}
